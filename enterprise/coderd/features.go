@@ -18,6 +18,7 @@ import (
 	"github.com/coder/coder/coderd/database"
 	"github.com/coder/coder/coderd/httpapi"
 	"github.com/coder/coder/codersdk"
+	"github.com/coder/coder/enterprise/audit"
 )
 
 type Enablements struct {
@@ -53,11 +54,14 @@ func newFeaturesService(
 	enablements Enablements,
 ) agpl.FeaturesService {
 	fs := &featuresService{
-		logger:         logger,
-		database:       db,
-		pubsub:         pubsub,
-		keys:           keys,
-		enablements:    enablements,
+		logger:      logger,
+		database:    db,
+		pubsub:      pubsub,
+		keys:        keys,
+		enablements: enablements,
+		enabledImplementations: agpl.FeatureInterfaces{
+			Auditor: audit.NewAuditor(),
+		},
 		resyncInterval: 10 * time.Minute,
 		entitlements: entitlements{
 			activeUsers: numericalEntitlement{

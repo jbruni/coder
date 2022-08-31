@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/coder/coder/coderd/audit"
 	"github.com/coder/coder/codersdk"
 )
 
@@ -35,4 +36,41 @@ func TestEntitlements(t *testing.T) {
 			assert.Equal(t, codersdk.EntitlementNotEntitled, fe.Entitlement)
 		}
 	})
+}
+
+func TestFeaturesServiceGet(t *testing.T) {
+	t.Parallel()
+	t.Run("Auditor", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			Auditor audit.Auditor
+		}{}
+		err := uut.Get(&target)
+		require.NoError(t, err)
+		assert.NotNil(t, target.Auditor)
+	})
+
+	t.Run("NotPointer", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			Auditor audit.Auditor
+		}{}
+		err := uut.Get(target)
+		require.Error(t, err)
+		assert.Nil(t, target.Auditor)
+	})
+
+	t.Run("UnknownInterface", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			test testInterface
+		}{}
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target.test)
+	})
+}
+
+type testInterface interface {
+	Test() error
 }

@@ -7,8 +7,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 	"time"
+
+	"github.com/coder/coder/coderd/audit"
 
 	"github.com/golang-jwt/jwt/v4"
 
@@ -334,4 +337,69 @@ func userLimitIs(fs *featuresService, limit int64) func(context.Context) bool {
 		defer fs.mu.RUnlock()
 		return fs.entitlements.activeUsers.limit == limit
 	}
+}
+
+func TestFeaturesServiceGet(t *testing.T) {
+	t.Parallel()
+	logger := slogtest.Make(t, nil)
+
+	// Note that these are not actually used because we don't run the syncEntitlements
+	// routine in this test.
+	pubsub := database.NewPubsubInMemory()
+	pub, _, err := ed25519.GenerateKey(rand.Reader)
+	require.NoError(t, err)
+	keyID := "testing"
+	db := databasefake.New()
+
+	t.Run("AuditorOff", func(t *testing.T) {
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{notEntitled},
+			},
+		}
+		target := struct {
+			Auditor audit.Auditor
+		}{}
+		err := uut.Get(&target)
+		require.NoError(t, err)
+		assert.NotNil(t, target.Auditor)
+		nop := audit.NewNop()
+		assert.Equal(t, reflect.ValueOf(nop).Elem().Type(), reflect.ValueOf(target.Auditor).Elem().Type())
+	})
+
+	t.Run("NotPointer", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			Auditor audit.Auditor
+		}{}
+		err := uut.Get(target)
+		require.Error(t, err)
+		assert.Nil(t, target.Auditor)
+	})
+
+	t.Run("UnknownInterface", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			test testInterface
+		}{}
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target.test)
+	})
+}
+
+type testInterface interface {
+	Test() error
 }
