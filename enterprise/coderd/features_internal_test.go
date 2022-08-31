@@ -415,7 +415,26 @@ func TestFeaturesServiceGet(t *testing.T) {
 	})
 
 	t.Run("NotPointer", func(t *testing.T) {
-		uut := featuresService{}
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{notEntitled},
+			},
+		}
 		target := struct {
 			Auditor agplAudit.Auditor
 		}{}
@@ -425,13 +444,89 @@ func TestFeaturesServiceGet(t *testing.T) {
 	})
 
 	t.Run("UnknownInterface", func(t *testing.T) {
-		uut := featuresService{}
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{notEntitled},
+			},
+		}
 		target := struct {
 			test testInterface
 		}{}
 		err := uut.Get(&target)
 		require.Error(t, err)
 		assert.Nil(t, target.test)
+	})
+
+	t.Run("PointerToNonStruct", func(t *testing.T) {
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{notEntitled},
+			},
+		}
+		var target agplAudit.Auditor
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target)
+	})
+
+	t.Run("StructWithNonInterfaces", func(t *testing.T) {
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{notEntitled},
+			},
+		}
+		target := struct {
+			N       int64
+			Auditor agplAudit.Auditor
+		}{}
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target.Auditor)
 	})
 }
 

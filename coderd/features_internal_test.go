@@ -69,6 +69,25 @@ func TestFeaturesServiceGet(t *testing.T) {
 		require.Error(t, err)
 		assert.Nil(t, target.test)
 	})
+
+	t.Run("PointerToNonStruct", func(t *testing.T) {
+		uut := featuresService{}
+		var target audit.Auditor
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target)
+	})
+
+	t.Run("StructWithNonInterfaces", func(t *testing.T) {
+		uut := featuresService{}
+		target := struct {
+			N       int64
+			Auditor audit.Auditor
+		}{}
+		err := uut.Get(&target)
+		require.Error(t, err)
+		assert.Nil(t, target.Auditor)
+	})
 }
 
 type testInterface interface {
