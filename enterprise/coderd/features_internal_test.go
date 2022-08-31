@@ -11,8 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/coder/coder/coderd/audit"
-
 	"github.com/golang-jwt/jwt/v4"
 
 	"github.com/google/uuid"
@@ -22,9 +20,12 @@ import (
 	"cdr.dev/slog/sloggers/slogtest"
 
 	"github.com/coder/coder/coderd"
+	agplCoderd "github.com/coder/coder/coderd"
+	agplAudit "github.com/coder/coder/coderd/audit"
 	"github.com/coder/coder/coderd/database"
 	"github.com/coder/coder/coderd/database/databasefake"
 	"github.com/coder/coder/codersdk"
+	"github.com/coder/coder/enterprise/audit"
 	"github.com/coder/coder/testutil"
 )
 
@@ -358,6 +359,9 @@ func TestFeaturesServiceGet(t *testing.T) {
 			pubsub:      pubsub,
 			keys:        map[string]ed25519.PublicKey{keyID: pub},
 			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
 			entitlements: entitlements{
 				hasLicense: false,
 				activeUsers: numericalEntitlement{
@@ -370,19 +374,50 @@ func TestFeaturesServiceGet(t *testing.T) {
 			},
 		}
 		target := struct {
-			Auditor audit.Auditor
+			Auditor agplAudit.Auditor
 		}{}
 		err := uut.Get(&target)
 		require.NoError(t, err)
 		assert.NotNil(t, target.Auditor)
-		nop := audit.NewNop()
-		assert.Equal(t, reflect.ValueOf(nop).Elem().Type(), reflect.ValueOf(target.Auditor).Elem().Type())
+		nop := agplAudit.NewNop()
+		assert.Equal(t, reflect.ValueOf(nop).Type(), reflect.ValueOf(target.Auditor).Type())
+	})
+
+	t.Run("AuditorOn", func(t *testing.T) {
+		uut := &featuresService{
+			logger:      logger,
+			database:    db,
+			pubsub:      pubsub,
+			keys:        map[string]ed25519.PublicKey{keyID: pub},
+			enablements: Enablements{AuditLogs: true},
+			enabledImplementations: agplCoderd.FeatureInterfaces{
+				Auditor: audit.NewAuditor(),
+			},
+			entitlements: entitlements{
+				hasLicense: false,
+				activeUsers: numericalEntitlement{
+					entitlement{notEntitled},
+					entitlementLimit{
+						unlimited: true,
+					},
+				},
+				auditLogs: entitlement{entitled},
+			},
+		}
+		target := struct {
+			Auditor agplAudit.Auditor
+		}{}
+		err := uut.Get(&target)
+		require.NoError(t, err)
+		assert.NotNil(t, target.Auditor)
+		ea := audit.NewAuditor()
+		assert.Equal(t, reflect.ValueOf(ea).Type(), reflect.ValueOf(target.Auditor).Type())
 	})
 
 	t.Run("NotPointer", func(t *testing.T) {
 		uut := featuresService{}
 		target := struct {
-			Auditor audit.Auditor
+			Auditor agplAudit.Auditor
 		}{}
 		err := uut.Get(target)
 		require.Error(t, err)

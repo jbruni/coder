@@ -15,6 +15,7 @@ import (
 	"cdr.dev/slog"
 
 	agpl "github.com/coder/coder/coderd"
+	agplAudit "github.com/coder/coder/coderd/audit"
 	"github.com/coder/coder/coderd/database"
 	"github.com/coder/coder/coderd/httpapi"
 	"github.com/coder/coder/codersdk"
@@ -303,8 +304,9 @@ func (s *featuresService) Get(ps any) error {
 }
 
 func (s *featuresService) setImplementation(ent entitlements, vf reflect.Value, tf reflect.Type) error {
+	// c.f. https://stackoverflow.com/questions/7132848/how-to-get-the-reflect-type-of-an-interface
 	switch tf {
-	case reflect.TypeOf(agpl.DisabledImplementations.Auditor):
+	case reflect.TypeOf((*agplAudit.Auditor)(nil)).Elem():
 		// Audit logging
 		if !s.enablements.AuditLogs || ent.auditLogs.state == notEntitled {
 			vf.Set(reflect.ValueOf(agpl.DisabledImplementations.Auditor))
