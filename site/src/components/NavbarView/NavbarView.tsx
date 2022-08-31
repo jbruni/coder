@@ -101,7 +101,7 @@ export const NavbarView: React.FC<React.PropsWithChildren<NavbarViewProps>> = ({
 
       <Stack direction="row" className={styles.profileButton}>
         <div className={styles.quota} >
-          <WorkspaceQuota loading={false} count={1} limit={3}/>
+          <WorkspaceQuota loading={false} count={1} limit={0}/>
         </div>
 
           <div className={styles.profileButton}>
