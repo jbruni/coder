@@ -1156,7 +1156,7 @@
   dependencies:
     "@jridgewell/trace-mapping" "0.3.9"
 
-"@discoveryjs/json-ext@^0.5.0", "@discoveryjs/json-ext@^0.5.3":
+"@discoveryjs/json-ext@^0.5.0", "@discoveryjs/json-ext@^0.5.3", "@discoveryjs/json-ext@^0.5.7":
   version "0.5.7"
   resolved "https://registry.yarnpkg.com/@discoveryjs/json-ext/-/json-ext-0.5.7.tgz#1d572bfbbe14b7704e0ba0f39b74815b84870d70"
   integrity sha512-dBVuXR082gk3jsFp7Rd/JI4kytwGHecnCoTtXFb7DB6CNHp4rg5k1bhg0nWdLGLnOV71lmDzGQaLMy8iPLY0pw==
@@ -5238,11 +5238,12 @@ chownr@^2.0.0:
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-2.0.0.tgz#15bfbe53d2eab4cf70f18a8cd68ebe5b3cb1dece"
   integrity sha512-bIomtDF5KGpdogkLd9VspvFzk9KfpyyGlS8YFVZl7TGPBHL5snIOnxeshwVgPteQ9b4Eydl+pVbIyE1DcvCWgQ==
 
-chromatic@6.7.1:
-  version "6.7.1"
-  resolved "https://registry.yarnpkg.com/chromatic/-/chromatic-6.7.1.tgz#6548e51121269832709a203a55ce09e3bcfdda6d"
-  integrity sha512-iDVYnB24zPrMROvVBblIxlOaj5+vO1uDI0wRXObi5DVrkvCjDvHzsFfPwUoIHGiXE7f6tmw38ZZRI+LGarM9Ow==
+chromatic@6.9.0:
+  version "6.9.0"
+  resolved "https://registry.yarnpkg.com/chromatic/-/chromatic-6.9.0.tgz#6ca326d2157263a7ffa73cde2ca2d0ea9d5cd816"
+  integrity sha512-ykfUHLyznZTPi8djKMfrBoOpWinSUfa2HDLmvHgYc2e6Jc4Oqm5jYW9S7l92navSF+EOzov90L7W8rX2NpiBjQ==
   dependencies:
+    "@discoveryjs/json-ext" "^0.5.7"
     "@types/webpack-env" "^1.17.0"
 
 chrome-trace-event@^1.0.2:
@@ -14432,10 +14433,10 @@ webidl-conversions@^6.1.0:
   resolved "https://registry.yarnpkg.com/webidl-conversions/-/webidl-conversions-6.1.0.tgz#9111b4d7ea80acd40f5270d666621afa78b69514"
   integrity sha512-qBIvFLGiBpLjfwmYAaHPXsn+ho5xZnGvyGvsarywGNc8VyQJUMHJ8OBKGGrPER0okBeMDaan4mNBlgBROxuI8w==
 
-webpack-bundle-analyzer@4.5.0:
-  version "4.5.0"
-  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-4.5.0.tgz#1b0eea2947e73528754a6f9af3e91b2b6e0f79d5"
-  integrity sha512-GUMZlM3SKwS8Z+CKeIFx7CVoHn3dXFcUAjT/dcZQQmfSZGvitPfMob2ipjai7ovFFqPvTqkEZ/leL4O0YOdAYQ==
+webpack-bundle-analyzer@4.6.1:
+  version "4.6.1"
+  resolved "https://registry.yarnpkg.com/webpack-bundle-analyzer/-/webpack-bundle-analyzer-4.6.1.tgz#bee2ee05f4ba4ed430e4831a319126bb4ed9f5a6"
+  integrity sha512-oKz9Oz9j3rUciLNfpGFjOb49/jEpXNmWdVH8Ls//zNcnLlQdTGXQQMsBbb/gR7Zl8WNLxVCq+0Hqbx3zv6twBw==
   dependencies:
     acorn "^8.0.4"
     acorn-walk "^8.0.0"
@@ -14803,12 +14804,7 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xstate@4.32.1:
-  version "4.32.1"
-  resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.32.1.tgz#1a09c808a66072938861a3b4acc5b38460244b70"
-  integrity sha512-QYUd+3GkXZ8i6qdixnOn28bL3EvA++LONYL/EMWwKlFSh/hiLndJ8YTnz77FDs+JUXcwU7NZJg7qoezoRHc4GQ==
-
-xstate@^4.29.0:
+xstate@4.33.5, xstate@^4.29.0:
   version "4.33.5"
   resolved "https://registry.yarnpkg.com/xstate/-/xstate-4.33.5.tgz#eafd193827b173901fac0d99e61bb4e5add6c7c8"
   integrity sha512-C8WGBeQC+dNMp4MmQX359BUkJCv2VPAH/CGRnhtgri5JZ7wVEX7fsbfcqznAgnKyD0m9Hd3cGhg/wuzIjnfT4A==
