@@ -305,7 +305,7 @@ func (api *API) postWorkspacesByOrganization(rw http.ResponseWriter, r *http.Req
 		}
 		if len(existing) >= int(api.Options.WorkspacesPerUserLimit) {
 			httpapi.Write(rw, http.StatusBadRequest, codersdk.Response{
-				Message: fmt.Sprintf("Cannot exceed limit of %d workspaces per user, already have %d existing workspace(s).", api.Options.MaxWorkspacesPerUser, len(existing)),
+				Message: fmt.Sprintf("Cannot exceed limit of %d workspaces per user, already have %d existing workspace(s).", api.Options.WorkspacesPerUserLimit, len(existing)),
 			})
 			return
 		}
