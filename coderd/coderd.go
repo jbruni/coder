@@ -56,23 +56,24 @@ type Options struct {
 	// APIRateLimit is the minutely throughput rate limit per user or ip.
 	// Setting a rate limit <0 will disable the rate limiter across the entire
 	// app. Specific routes may have their own limiters.
-	APIRateLimit         int
-	AWSCertificates      awsidentity.Certificates
-	Authorizer           rbac.Authorizer
-	AzureCertificates    x509.VerifyOptions
-	GoogleTokenValidator *idtoken.Validator
-	GithubOAuth2Config   *GithubOAuth2Config
-	OIDCConfig           *OIDCConfig
-	PrometheusRegistry   *prometheus.Registry
-	ICEServers           []webrtc.ICEServer
-	SecureAuthCookie     bool
-	SSHKeygenAlgorithm   gitsshkey.Algorithm
-	Telemetry            telemetry.Reporter
-	TURNServer           *turnconn.Server
-	TracerProvider       *sdktrace.TracerProvider
-	AutoImportTemplates  []AutoImportTemplate
-	LicenseHandler       http.Handler
-	FeaturesService      FeaturesService
+	APIRateLimit           int
+	AWSCertificates        awsidentity.Certificates
+	Authorizer             rbac.Authorizer
+	AzureCertificates      x509.VerifyOptions
+	GoogleTokenValidator   *idtoken.Validator
+	GithubOAuth2Config     *GithubOAuth2Config
+	OIDCConfig             *OIDCConfig
+	PrometheusRegistry     *prometheus.Registry
+	ICEServers             []webrtc.ICEServer
+	SecureAuthCookie       bool
+	SSHKeygenAlgorithm     gitsshkey.Algorithm
+	Telemetry              telemetry.Reporter
+	TURNServer             *turnconn.Server
+	TracerProvider         *sdktrace.TracerProvider
+	AutoImportTemplates    []AutoImportTemplate
+	LicenseHandler         http.Handler
+	FeaturesService        FeaturesService
+	WorkspacesPerUserLimit uint
 
 	TailscaleEnable    bool
 	TailnetCoordinator *tailnet.Coordinator

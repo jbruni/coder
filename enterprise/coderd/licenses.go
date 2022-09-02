@@ -44,8 +44,9 @@ var key20220812 []byte
 var keys = map[string]ed25519.PublicKey{"2022-08-12": ed25519.PublicKey(key20220812)}
 
 type Features struct {
-	UserLimit int64 `json:"user_limit"`
-	AuditLog  int64 `json:"audit_log"`
+	UserLimit              int64 `json:"user_limit"`
+	AuditLog               int64 `json:"audit_log"`
+	WorkspacesPerUserLimit int64 `json:"workspaces_per_user_limit"`
 }
 
 type Claims struct {

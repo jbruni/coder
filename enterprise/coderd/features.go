@@ -19,7 +19,8 @@ import (
 )
 
 type Enablements struct {
-	AuditLogs bool
+	AuditLogs              bool
+	WorkspacesPerUserLimit bool
 }
 
 type featuresService struct {
@@ -108,6 +109,16 @@ func (s *featuresService) EntitlementsAPI(rw http.ResponseWriter, r *http.Reques
 			"Audit logging is enabled but your license for this feature is expired")
 	}
 
+	// Workspaces Per User
+	resp.Features[codersdk.FeatureWorkspacesPerUserLimit] = codersdk.Feature{
+		Entitlement: e.workspacesPerUserLimit.state.toSDK(),
+		Enabled:     s.enablements.WorkspacesPerUserLimit,
+	}
+	if e.workspacesPerUserLimit.state == gracePeriod && s.enablements.WorkspacesPerUserLimit {
+		resp.Warnings = append(resp.Warnings,
+			"Workspaces per user limit is enabled but your license for this feature is expired")
+	}
+
 	httpapi.Write(rw, http.StatusOK, resp)
 }
 
@@ -147,9 +158,10 @@ type numericalEntitlement struct {
 }
 
 type entitlements struct {
-	hasLicense  bool
-	activeUsers numericalEntitlement
-	auditLogs   entitlement
+	hasLicense             bool
+	activeUsers            numericalEntitlement
+	auditLogs              entitlement
+	workspacesPerUserLimit entitlement
 }
 
 func (s *featuresService) getEntitlements(ctx context.Context) (entitlements, error) {
@@ -186,6 +198,9 @@ func (s *featuresService) getEntitlements(ctx context.Context) (entitlements, er
 		}
 		if claims.Features.AuditLog > 0 {
 			e.auditLogs.state = thisEntitlement
+		}
+		if claims.Features.WorkspacesPerUserLimit > 0 {
+			e.workspacesPerUserLimit.state = thisEntitlement
 		}
 	}
 	return e, nil

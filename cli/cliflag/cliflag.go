@@ -107,6 +107,23 @@ func IntVarP(flagset *pflag.FlagSet, ptr *int, name string, shorthand string, en
 	flagset.IntVarP(ptr, name, shorthand, int(vi64), fmtUsage(usage, env))
 }
 
+// UintVarP sets a uint flag on the given flag set.
+func UintVarP(flagset *pflag.FlagSet, ptr *uint, name string, shorthand string, env string, def uint, usage string) {
+	val, ok := os.LookupEnv(env)
+	if !ok || val == "" {
+		flagset.UintVarP(ptr, name, shorthand, def, fmtUsage(usage, env))
+		return
+	}
+
+	vi64, err := strconv.ParseUint(val, 10, 8)
+	if err != nil {
+		flagset.UintVarP(ptr, name, shorthand, def, fmtUsage(usage, env))
+		return
+	}
+
+	flagset.UintVarP(ptr, name, shorthand, uint(vi64), fmtUsage(usage, env))
+}
+
 func Bool(flagset *pflag.FlagSet, name, shorthand, env string, def bool, usage string) {
 	val, ok := os.LookupEnv(env)
 	if !ok || val == "" {

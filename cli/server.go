@@ -122,6 +122,7 @@ func Server(newAPI func(*coderd.Options) *coderd.API) *cobra.Command {
 		verbose                          bool
 		metricsCacheRefreshInterval      time.Duration
 		agentStatRefreshInterval         time.Duration
+		workspacesPerUserLimit           uint
 	)
 
 	root := &cobra.Command{
@@ -364,6 +365,7 @@ func Server(newAPI func(*coderd.Options) *coderd.API) *cobra.Command {
 				AutoImportTemplates:         validatedAutoImportTemplates,
 				MetricsCacheRefreshInterval: metricsCacheRefreshInterval,
 				AgentStatsRefreshInterval:   agentStatRefreshInterval,
+				WorkspacesPerUserLimit:      workspacesPerUserLimit,
 			}
 
 			if oauth2GithubClientSecret != "" {
@@ -840,6 +842,7 @@ func Server(newAPI func(*coderd.Options) *coderd.API) *cobra.Command {
 	cliflag.BoolVarP(root.Flags(), &spooky, "spooky", "", "", false, "Specifies spookiness level")
 	_ = root.Flags().MarkHidden("spooky")
 	cliflag.BoolVarP(root.Flags(), &verbose, "verbose", "v", "CODER_VERBOSE", false, "Enables verbose logging.")
+	cliflag.UintVarP(root.Flags(), &workspacesPerUserLimit, "workspaces-per-user-limit", "", "CODER_WORKSPACES_PER_USER_LIMIT", 0, "Specifies the max number of workspaces that can be created by a user.")
 
 	// These metrics flags are for manually testing the metric system.
 	// The defaults should be acceptable for any Coder deployment of any
